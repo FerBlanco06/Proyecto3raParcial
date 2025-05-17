@@ -1,0 +1,101 @@
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
+
+#nullable disable
+
+namespace Proyecto3raParcial.Migrations
+{
+    /// <inheritdoc />
+    public partial class BBDEmpaque : Migration
+    {
+        /// <inheritdoc />
+        protected override void Up(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.CreateTable(
+                name: "Clientes",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Nombre_empresa = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Pais = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Contacto = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Requisitos = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Clientes", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Frutas",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Nombre = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Variedad = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Calidad = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Proveedor = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Frutas", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Envios",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    FrutaId = table.Column<int>(type: "int", nullable: false),
+                    ClienteId = table.Column<int>(type: "int", nullable: false),
+                    Fecha_embarque = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Cantidad_kg = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Destino = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Estado = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Documentacion = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Envios", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Envios_Clientes_ClienteId",
+                        column: x => x.ClienteId,
+                        principalTable: "Clientes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Envios_Frutas_FrutaId",
+                        column: x => x.FrutaId,
+                        principalTable: "Frutas",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Envios_ClienteId",
+                table: "Envios",
+                column: "ClienteId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Envios_FrutaId",
+                table: "Envios",
+                column: "FrutaId");
+        }
+
+        /// <inheritdoc />
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.DropTable(
+                name: "Envios");
+
+            migrationBuilder.DropTable(
+                name: "Clientes");
+
+            migrationBuilder.DropTable(
+                name: "Frutas");
+        }
+    }
+}
