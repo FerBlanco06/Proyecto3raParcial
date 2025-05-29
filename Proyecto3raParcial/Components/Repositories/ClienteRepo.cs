@@ -15,7 +15,7 @@ namespace Proyecto3raParcial.Components.Repositories
 
         public async Task<IEnumerable<Cliente>> GetAll()
         {
-            return await _context.Clientes.ToListAsync();
+            return await _context.Clientes.AsNoTracking().ToListAsync();
         }
 
         public async Task<Cliente?> GetById(int id)

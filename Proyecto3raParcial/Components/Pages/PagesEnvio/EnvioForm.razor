@@ -12,7 +12,7 @@
     <DataAnnotationsValidator />
     <ValidationSummary />
 
-    <!-- CLIENTE -->
+ 
     <div class="mb-3">
         <label>Cliente</label>
         <select class="form-select" @onchange="ClienteSeleccionado">
@@ -27,14 +27,14 @@
         <ValidationMessage For="@(() => envio.ClienteId)" />
     </div>
 
-    <!-- DESTINO -->
+   
     <div class="mb-3">
         <label>Destino</label>
         <InputText class="form-control" @bind-Value="envio.Destino" readonly />
         <ValidationMessage For="@(() => envio.Destino)" />
     </div>
 
-    <!-- FRUTAS -->
+   
     <div class="mb-3">
         <label>Frutas</label>
         @foreach (var fruta in frutas)
@@ -49,7 +49,7 @@
         <ValidationMessage For="@(() => envio.Frutas)" />
     </div>
 
-    <!-- BOTONES -->
+    
     <button class="btn btn-primary">Guardar</button>
     <a href="/envio" class="btn btn-danger">Cancelar</a>
 </EditForm>

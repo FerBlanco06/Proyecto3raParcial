@@ -18,7 +18,7 @@ namespace Proyecto3raParcial.Components.Repositories
 
         public async Task<IEnumerable<Envio>> GetAll()
         {
-            return await _context.Envios
+            return await _context.Envios.AsNoTracking()
                 .Include(e => e.Cliente)
                 .Include(e => e.Frutas)
                 .ToListAsync();
@@ -98,10 +98,10 @@ namespace Proyecto3raParcial.Components.Repositories
             throw new NotImplementedException();
         }
 
-        public Task CambiarEstado(int envioId, bool enviado)
-        {
-            throw new NotImplementedException();
-        }
+        //public Task CambiarEstado(int envioId, bool enviado)
+        //{
+        //    throw new NotImplementedException();
+        //}
 
         public Task<IEnumerable<Fruta>> GetFrutas()
         {

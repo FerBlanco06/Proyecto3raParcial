@@ -14,7 +14,7 @@ namespace Proyecto3raParcial.Components.Repositories
         Task Update(Envio envio);
         Task Update(Envio envio, List<int> frutaIds);
         Task Delete(int id);
-        Task CambiarEstado(int envioId, bool enviado);
+        //Task CambiarEstado(int envioId, bool enviado);
     }
 
 
