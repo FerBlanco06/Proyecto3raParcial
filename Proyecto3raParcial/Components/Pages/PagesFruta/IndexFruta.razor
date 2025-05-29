@@ -1,0 +1,71 @@
+﻿@page "/fruta"
+@rendermode InteractiveServer
+@inject IFrutaRepo FrutaRepo
+@inject NavigationManager Navigation
+<PageTitle>Frutas</PageTitle>
+
+<h3>Frutas</h3>
+
+<a class="btn btn-primary" href="/frutas/nueva">Nueva fruta</a>
+
+@if (frutas == null)
+{
+    <p><em>Cargando...</em></p>
+}
+else if (frutas.Count > 0)
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Número de Serie</th>
+                <th>Fecha de Registro</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var fruta in frutas)
+            {
+                <tr>
+                    <td>@fruta.Nombre</td>
+                    <td>@fruta.NumeroSerie</td>
+                    <td>@fruta.FechaRegistro.ToShortDateString()</td>
+                    <td>
+                        <button class="btn btn-outline-primary" @onclick="@(() => Editar(fruta))">Editar</button>
+                        <button class="btn btn-outline-danger" @onclick="@(() => Eliminar(fruta))"> Eliminar</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <h3>No hay frutas registradas.</h3>
+}
+
+@code {
+    private List<Fruta>? frutas;
+
+    protected override async Task OnInitializedAsync()
+    {
+        frutas = (await FrutaRepo.GetAll()).ToList();
+    }
+
+    private void Editar(Fruta fruta)
+    {
+        Navigation.NavigateTo($"/frutas/editar/{fruta.Id}");
+    }
+
+    private async Task Eliminar(Fruta fruta)
+    {
+        try
+        {
+            await FrutaRepo.Delete(fruta.Id);
+            frutas = (await FrutaRepo.GetAll()).ToList(); 
+        }
+        catch (Exception)
+        {
+            // Aquí puedes mostrar un mensaje de error si quieres
+        }
+    }
+}

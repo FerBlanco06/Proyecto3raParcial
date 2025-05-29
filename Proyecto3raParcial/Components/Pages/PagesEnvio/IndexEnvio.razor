@@ -1,0 +1,71 @@
+﻿@page "/envio"
+@inject IEnvioRepo EnvioRepo
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
+
+<h3>Lista de Envíos</h3>
+<a class="btn btn-primary mb-3" href="/envios/nuevo">Nuevo Envío</a>
+
+@if (envios == null)
+{
+    <p><em>Cargando...</em></p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Cliente</th>
+                <th>Destino</th>
+                <th>Frutas</th>
+                <th>Acciones</th>
+               
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var envio in envios)
+            {
+                <tr>
+                    <td>@envio.Cliente?.Nombre</td>
+                    <td>@envio.Destino</td>
+                    <td>
+                        @foreach (var fruta in envio.Frutas)
+                        {
+                            <span class="badge bg-secondary me-1">@fruta.Nombre</span>
+                        }
+                    </td>
+                    <td>
+                        <button class="btn btn-outline-primary btn-sm" @onclick="@(() => Editar(envio.Id))">Editar</button>
+                        <button class="btn btn-outline-danger" @onclick="@(() => Eliminar(envio))">Eliminar</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Envio>? envios;
+
+    protected override async Task OnInitializedAsync()
+    {
+        envios = (await EnvioRepo.GetAll()).ToList();
+    }
+
+    private void Editar(int id)
+    {
+        Navigation.NavigateTo($"/envios/editar/{id}");
+    }
+    private async Task Eliminar(Envio envio)
+    {
+        try
+        {
+            await EnvioRepo.Delete(envio.Id);
+            envios = (await EnvioRepo.GetAll()).ToList();
+        }
+        catch (Exception)
+        {
+            // Aquí puedes agregar mensaje de error si lo deseas
+        }
+    }
+}

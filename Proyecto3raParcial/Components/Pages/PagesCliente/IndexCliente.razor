@@ -1,0 +1,75 @@
+﻿@page "/cliente"
+@rendermode InteractiveServer
+@inject IClienteRepo ClienteRepo
+@inject NavigationManager Navigation
+<PageTitle>Clientes</PageTitle>
+
+<h3>Clientes</h3>
+
+<a class="btn btn-primary" href="/clientes/nuevo">Nuevo cliente</a>
+
+@if (clientes == null)
+{
+    <p><em>Cargando...</em></p>
+}
+else if (clientes.Count > 0)
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Destino</th>
+                <th>Correo</th>
+                <th>Teléfono</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var cliente in clientes)
+            {
+                <tr>
+                    <td>@cliente.Nombre</td>
+                    <td>@cliente.Destino</td>
+                    <td>@cliente.Correo</td>
+                    <td>@cliente.Telefono</td>
+                    <td>
+                        <button class="btn btn-outline-primary" @onclick="@(() => Editar(cliente))">Editar</button>
+                        <button class="btn btn-outline-danger" @onclick="@(() => Eliminar(cliente))">Eliminar</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <h3>No hay clientes registrados.</h3>
+}
+
+@code {
+    private List<Cliente>? clientes;
+
+    protected override async Task OnInitializedAsync()
+    {
+        clientes = (await ClienteRepo.GetAll()).ToList();
+    }
+
+    private void Editar(Cliente cliente)
+    {
+        Navigation.NavigateTo($"/clientes/editar/{cliente.Id}");
+    }
+
+    private async Task Eliminar(Cliente cliente)
+    {
+        try
+        {
+            await ClienteRepo.Delete(cliente.Id);
+            clientes = (await ClienteRepo.GetAll()).ToList();
+        }
+        catch (Exception)
+        {
+            // Aquí puedes agregar mensaje de error si lo deseas
+        }
+    }
+}
+

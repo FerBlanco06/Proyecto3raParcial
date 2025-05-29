@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.13.35825.156 d17.13
+VisualStudioVersion = 17.13.35825.156
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Proyecto3raParcial", "Proyecto3raParcial\Proyecto3raParcial.csproj", "{0E1F14ED-C49F-4DA4-BA5F-5173F0B6A1AC}"
 EndProject

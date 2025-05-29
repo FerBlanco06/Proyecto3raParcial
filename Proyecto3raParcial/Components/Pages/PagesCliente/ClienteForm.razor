@@ -1,0 +1,70 @@
+﻿@page "/clientes/nuevo"
+@page "/clientes/editar/{Id:int}"
+@inject NavigationManager Navigation
+@inject IClienteRepo ClienteRepo
+@rendermode InteractiveServer
+
+<h3>@_mensaje Cliente</h3>
+
+<EditForm Model="_cliente" FormName="frmClientes" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label>Nombre</label>
+        <InputText class="form-control" @bind-Value="_cliente.Nombre" />
+        <ValidationMessage For="@(() => _cliente.Nombre)" />
+    </div>
+
+    <div class="mb-3">
+        <label>Destino</label>
+        <InputText class="form-control" @bind-Value="_cliente.Destino" />
+        <ValidationMessage For="@(() => _cliente.Destino)" />
+    </div>
+
+    <div class="mb-3">
+        <label>Correo</label>
+        <InputText class="form-control" @bind-Value="_cliente.Correo" />
+        <ValidationMessage For="@(() => _cliente.Correo)" />
+    </div>
+
+    <div class="mb-3">
+        <label>Teléfono</label>
+        <InputText class="form-control" @bind-Value="_cliente.Telefono" />
+        <ValidationMessage For="@(() => _cliente.Telefono)" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Guardar</button>
+    <a class="btn btn-danger" href="/cliente">Cancelar</a>
+</EditForm>
+
+@code {
+    [Parameter] public int? Id { get; set; }
+
+    private Cliente _cliente = new();
+    private string _mensaje = "Nuevo";
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Id.HasValue && Id.Value > 0)
+        {
+            var clienteExistente = await ClienteRepo.GetById(Id.Value);
+            if (clienteExistente != null)
+            {
+                _cliente = clienteExistente;
+                _mensaje = "Editar";
+            }
+        }
+    }
+
+    private async Task Guardar()
+    {
+        if (Id.HasValue && Id.Value > 0)
+            await ClienteRepo.Update(_cliente);
+        else
+            await ClienteRepo.Add(_cliente);
+
+        Navigation.NavigateTo("/cliente");
+    }
+}
+

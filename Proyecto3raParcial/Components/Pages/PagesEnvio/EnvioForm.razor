@@ -1,0 +1,126 @@
+﻿@page "/envios/nuevo"
+@page "/envios/editar/{Id:int}"
+@inject NavigationManager Navigation
+@inject IEnvioRepo EnvioRepo
+@inject IClienteRepo ClienteRepo
+@inject IFrutaRepo FrutaRepo
+@rendermode InteractiveServer
+
+<h3>@titulo Envío</h3>
+
+<EditForm Model="envio" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <!-- CLIENTE -->
+    <div class="mb-3">
+        <label>Cliente</label>
+        <select class="form-select" @onchange="ClienteSeleccionado">
+            <option value="">-- Seleccione cliente --</option>
+            @foreach (var cliente in clientes)
+            {
+                <option value="@cliente.Id" selected="@(cliente.Id == envio.ClienteId)">
+                    @cliente.Nombre
+                </option>
+            }
+        </select>
+        <ValidationMessage For="@(() => envio.ClienteId)" />
+    </div>
+
+    <!-- DESTINO -->
+    <div class="mb-3">
+        <label>Destino</label>
+        <InputText class="form-control" @bind-Value="envio.Destino" readonly />
+        <ValidationMessage For="@(() => envio.Destino)" />
+    </div>
+
+    <!-- FRUTAS -->
+    <div class="mb-3">
+        <label>Frutas</label>
+        @foreach (var fruta in frutas)
+        {
+            <div>
+                <input type="checkbox"
+                       checked="@frutaSeleccionadas.Contains(fruta.Id)"
+                       @onchange="e => OnFrutaCheckboxChanged(e, fruta)" />
+                @fruta.Nombre
+            </div>
+        }
+        <ValidationMessage For="@(() => envio.Frutas)" />
+    </div>
+
+    <!-- BOTONES -->
+    <button class="btn btn-primary">Guardar</button>
+    <a href="/envio" class="btn btn-danger">Cancelar</a>
+</EditForm>
+
+@code {
+    [Parameter] public int? Id { get; set; }
+
+    private Envio envio = new();
+    private string titulo = "Nuevo";
+    private List<Cliente> clientes = new();
+    private List<Fruta> frutas = new();
+    private List<int> frutaSeleccionadas = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        clientes = (await ClienteRepo.GetAll()).ToList();
+        frutas = (await FrutaRepo.GetAll()).ToList();
+
+        if (Id.HasValue && Id.Value > 0)
+        {
+            var envioExistente = await EnvioRepo.GetById(Id.Value);
+            if (envioExistente != null)
+            {
+                envio = envioExistente;
+                frutaSeleccionadas = envio.Frutas.Select(f => f.Id).ToList();
+                titulo = "Editar";
+            }
+        }
+    }
+
+    private async Task ClienteSeleccionado(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out int clienteId))
+        {
+            envio.ClienteId = clienteId;
+            var cliente = clientes.FirstOrDefault(c => c.Id == clienteId);
+            envio.Destino = cliente?.Destino ?? string.Empty;
+        }
+        else
+        {
+            envio.ClienteId = 0;
+            envio.Destino = string.Empty;
+        }
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private void OnFrutaCheckboxChanged(ChangeEventArgs e, Fruta fruta)
+    {
+        bool seleccionado = (bool)e.Value;
+
+        if (seleccionado)
+        {
+            if (!frutaSeleccionadas.Contains(fruta.Id))
+                frutaSeleccionadas.Add(fruta.Id);
+        }
+        else
+        {
+            frutaSeleccionadas.Remove(fruta.Id);
+        }
+    }
+
+    private async Task Guardar()
+    {
+        envio.Frutas = frutas.Where(f => frutaSeleccionadas.Contains(f.Id)).ToList();
+
+        if (Id.HasValue && Id.Value > 0)
+            await EnvioRepo.Update(envio);
+        else
+            await EnvioRepo.Add(envio);
+
+        Navigation.NavigateTo("/envio");
+    }
+}

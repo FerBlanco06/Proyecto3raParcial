@@ -1,0 +1,63 @@
+﻿@page "/frutas/nueva"
+@page "/frutas/editar/{Id:int}"
+@inject NavigationManager Navigation
+@inject IFrutaRepo FrutaRepo
+@rendermode InteractiveServer
+
+<h3>@_mensaje Fruta</h3>
+
+<EditForm Model="_fruta" FormName="frmFrutas" OnValidSubmit="Guardar">
+	<DataAnnotationsValidator />
+	<ValidationSummary />
+
+	<div class="mb-3">
+		<label>Nombre</label>
+		<InputText class="form-control" @bind-Value="_fruta.Nombre" />
+		<ValidationMessage For="@(() => _fruta.Nombre)" />
+	</div>
+
+	<div class="mb-3">
+		<label>Número de Serie</label>
+		<InputText class="form-control" @bind-Value="_fruta.NumeroSerie" />
+		<ValidationMessage For="@(() => _fruta.NumeroSerie)" />
+	</div>
+
+	<div class="mb-3">
+		<label>Fecha de Registro</label>
+		<InputDate class="form-control" @bind-Value="_fruta.FechaRegistro" />
+		<ValidationMessage For="@(() => _fruta.FechaRegistro)" />
+	</div>
+
+	<button type="submit" class="btn btn-primary">Guardar</button>
+	<a class="btn btn-danger" href="/fruta">Cancelar</a>
+</EditForm>
+
+@code {
+	[Parameter] public int? Id { get; set; }
+
+	private Fruta _fruta = new() { FechaRegistro = DateTime.Now };
+	private string _mensaje = "Nueva";
+
+	protected override async Task OnInitializedAsync()
+	{
+		if (Id.HasValue && Id.Value > 0)
+		{
+			var frutaExistente = await FrutaRepo.GetById(Id.Value);
+			if (frutaExistente != null)
+			{
+				_fruta = frutaExistente;
+				_mensaje = "Editar";
+			}
+		}
+	}
+
+	private async Task Guardar()
+	{
+		if (Id.HasValue && Id.Value > 0)
+			await FrutaRepo.Update(_fruta);
+		else
+			await FrutaRepo.Add(_fruta);
+
+		Navigation.NavigateTo("/fruta");
+	}
+}

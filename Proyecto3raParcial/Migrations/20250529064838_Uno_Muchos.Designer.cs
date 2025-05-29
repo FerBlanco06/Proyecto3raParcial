@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Proyecto3raParcial.Components.Data;
 
@@ -11,9 +12,11 @@ using Proyecto3raParcial.Components.Data;
 namespace Proyecto3raParcial.Migrations
 {
     [DbContext(typeof(DBDbContext))]
-    partial class DBDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250529064838_Uno_Muchos")]
+    partial class Uno_Muchos
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

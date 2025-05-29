@@ -12,8 +12,8 @@ using Proyecto3raParcial.Components.Data;
 namespace Proyecto3raParcial.Migrations
 {
     [DbContext(typeof(DBDbContext))]
-    [Migration("20250513165450_BBDEmpaque")]
-    partial class BBDEmpaque
+    [Migration("20250527155304_Iniciañ+l")]
+    partial class Iniciañl
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -103,21 +103,18 @@ namespace Proyecto3raParcial.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Calidad")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime>("FechaRegistro")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Nombre")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
-                    b.Property<string>("Proveedor")
+                    b.Property<string>("NumeroSerie")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Variedad")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
 
@@ -133,7 +130,7 @@ namespace Proyecto3raParcial.Migrations
                         .IsRequired();
 
                     b.HasOne("Proyecto3raParcial.Components.Models.Fruta", "Fruta")
-                        .WithMany("Envios")
+                        .WithMany()
                         .HasForeignKey("FrutaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -144,11 +141,6 @@ namespace Proyecto3raParcial.Migrations
                 });
 
             modelBuilder.Entity("Proyecto3raParcial.Components.Models.Cliente", b =>
-                {
-                    b.Navigation("Envios");
-                });
-
-            modelBuilder.Entity("Proyecto3raParcial.Components.Models.Fruta", b =>
                 {
                     b.Navigation("Envios");
                 });
